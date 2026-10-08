@@ -3,14 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
     use HasFactory, Notifiable, HasRoles;
+
+    // الإيميلات والإشعارات توصل للمستخدم بلغته المحفوظة
+    public function preferredLocale(): string
+    {
+        return in_array($this->locale, ['ar', 'en']) ? $this->locale : 'ar';
+    }
 
     protected $fillable = [
         'name',

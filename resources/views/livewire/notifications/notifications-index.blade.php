@@ -8,8 +8,8 @@
     <x-card padding="p-0" class="divide-y divide-border">
         @forelse ($notifications as $notification)
             <div class="px-5 py-4 {{ $notification->read_at ? '' : 'bg-gold-300/10' }}">
-                <p class="text-sm font-medium text-ink">{{ $notification->data['title'] ?? '' }}</p>
-                <p class="text-sm text-ink-muted mt-0.5">{{ $notification->data['body'] ?? '' }}</p>
+                <p class="text-sm font-medium text-ink">{{ __($notification->data['title'] ?? '') }}</p>
+                <p class="text-sm text-ink-muted mt-0.5">{{ __($notification->data['body'] ?? '') }}</p>
                 <p class="text-xs text-ink-muted/70 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
             </div>
         @empty

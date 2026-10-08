@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Profile;
 
+use App\Notifications\SystemNotification;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -34,6 +35,24 @@ class UpdateProfile extends Component
         ]);
 
         session()->flash('success', __('Profile updated successfully.'));
+    }
+
+    // زر لفحص إعدادات البريد: يبعت إيميل تجريبي لإيميل المستخدم الحالي
+    public function sendTestEmail()
+    {
+        $user = auth()->user();
+
+        try {
+            $user->notify(new SystemNotification(
+                title: 'Test email',
+                body: 'If you received this message, email sending is working correctly.',
+            ));
+
+            session()->flash('success', __('Test email sent to :email', ['email' => $user->email]));
+        } catch (\Throwable $e) {
+            report($e);
+            session()->flash('error', __('Email could not be sent. Check the mail settings (MAIL_*) in .env.') . ' (' . $e->getMessage() . ')');
+        }
     }
 
     public function render()

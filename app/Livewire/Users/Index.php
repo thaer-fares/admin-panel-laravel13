@@ -145,21 +145,53 @@ class Index extends Component
         } else {
             $data['password'] = Hash::make($this->password);
             $user = User::create($data);
-
-            // إشعار كل المدراء بوجود مستخدم جديد
-            User::role('Admin')->get()->each(function ($admin) use ($user) {
-                $admin->notify(new SystemNotification(
-                    title: __('New user created'),
-                    body: $user->name . ' - ' . $user->email,
-                ));
-            });
         }
 
         $user->syncRoles($this->selectedRoles);
 
+        $mailFailed = !$this->editingId && !$this->sendNewUserNotifications($user);
+
         $this->showModal = false;
         $this->resetForm();
         session()->flash('success', __('Saved successfully.'));
+
+        if ($mailFailed) {
+            session()->flash('error', __('The user was saved, but the email could not be sent. Check the mail settings (MAIL_*) in .env.'));
+        }
+    }
+
+    // إيميل ترحيب للمستخدم الجديد + إشعار كل المدراء
+    // يرجّع false إذا فشل الإرسال (مثلاً إعدادات SMTP غلط) بدون ما يوقف الحفظ
+    protected function sendNewUserNotifications(User $user): bool
+    {
+        $ok = $this->safeNotify($user, new SystemNotification(
+            title: 'Welcome to the control panel',
+            body: 'Your account has been created. You can sign in using this email address.',
+            url: route('login'),
+        ));
+
+        User::role('Admin')->whereKeyNot($user->id)->get()->each(function ($admin) use ($user, &$ok) {
+            $ok = $this->safeNotify($admin, new SystemNotification(
+                title: 'New user created',
+                body: $user->name . ' - ' . $user->email,
+                url: route('users.index'),
+            )) && $ok;
+        });
+
+        return $ok;
+    }
+
+    protected function safeNotify(User $recipient, SystemNotification $notification): bool
+    {
+        try {
+            $recipient->notify($notification);
+
+            return true;
+        } catch (\Throwable $e) {
+            report($e);
+
+            return false;
+        }
     }
 
     public function toggleActive(int $id)

@@ -48,6 +48,13 @@
                     {{ __('Permissions') }}
                 </a>
                 @endcan
+                @can('send-emails')
+                <a href="{{ route('emails.index') }}"
+                    class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('emails.*') ? 'bg-white/15 text-white font-medium' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                    <svg class="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+                    {{ __('Send Emails') }}
+                </a>
+                @endcan
 
                 <div class="pt-4 mt-4 border-t border-white/10 space-y-1">
                     <a href="{{ route('profile.edit') }}"

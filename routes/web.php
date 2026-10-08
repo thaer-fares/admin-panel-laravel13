@@ -3,6 +3,7 @@
 use App\Http\Controllers\UsersExportController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard;
+use App\Livewire\Emails\Index as EmailsIndex;
 use App\Livewire\Notifications\NotificationsIndex;
 use App\Livewire\Permissions\Index as PermissionsIndex;
 use App\Livewire\Profile\ChangePassword;
@@ -58,6 +59,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/permissions', PermissionsIndex::class)
         ->middleware('permission:manage-permissions')
         ->name('permissions.index');
+
+    Route::get('/emails', EmailsIndex::class)
+        ->middleware('permission:send-emails')
+        ->name('emails.index');
 
     Route::get('/notifications', NotificationsIndex::class)->name('notifications.index');
     Route::get('/profile', UpdateProfile::class)->name('profile.edit');

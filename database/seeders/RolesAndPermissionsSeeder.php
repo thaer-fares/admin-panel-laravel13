@@ -18,6 +18,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage-roles',
             'manage-permissions',
             'manage-settings',
+            'send-emails',
         ];
 
         foreach ($permissions as $permission) {

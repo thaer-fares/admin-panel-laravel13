@@ -1,4 +1,4 @@
-<div class="relative" x-data @click.outside="$wire.open = false">
+<div class="relative" wire:poll.30s x-data @click.outside="$wire.open = false">
     <button wire:click="toggle" class="relative p-2 rounded-full hover:bg-app-bg">
         <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -23,8 +23,8 @@
             @forelse ($notifications as $notification)
                 <div wire:click="markAsRead('{{ $notification->id }}')"
                     class="px-4 py-3 border-b border-border/60 cursor-pointer hover:bg-app-bg {{ $notification->read_at ? '' : 'bg-gold-300/10' }}">
-                    <p class="text-sm text-ink font-medium">{{ $notification->data['title'] ?? '' }}</p>
-                    <p class="text-xs text-ink-muted mt-0.5">{{ $notification->data['body'] ?? '' }}</p>
+                    <p class="text-sm text-ink font-medium">{{ __($notification->data['title'] ?? '') }}</p>
+                    <p class="text-xs text-ink-muted mt-0.5">{{ __($notification->data['body'] ?? '') }}</p>
                     <p class="text-[11px] text-ink-muted/70 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
                 </div>
             @empty
